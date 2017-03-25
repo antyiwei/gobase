@@ -68,6 +68,7 @@ func GetBankCardLast4(cardNumber string) string {
 
 func KSort(params map[string]interface{}) {
 	//keys 排序
+	// 呵呵 ，现在没写
 }
 
 //对字符串进行截取
