@@ -206,7 +206,7 @@ func GetDayProfit(capital int, annual_rate float32) float64 {
 }
 
 func test(){
-fmt.Prnt("OOOdfsdddddOOOOOOOOOOOOOOOOOOOO")
+fmt.Prnt("OOOdfsdddddOiOOOOOOOOOOOOOOOOOOO")
 
 
 }
