@@ -200,13 +200,7 @@ func SubFloatToFloat(f float64, m int) float64 {
 	return newf
 }
 
-// 计算每日收益
+// GetDayProfit 计算每日收益
 func GetDayProfit(capital int, annual_rate float32) float64 {
 	return SubFloatToFloat(float64(capital)*float64(annual_rate)/100/365, 3)
-}
-
-func test(){
-fmt.Prnt("fdfdfdfdfdfd")
-
-
 }
