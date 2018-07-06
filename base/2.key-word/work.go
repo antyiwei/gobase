@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 /*
 课堂作业
 
@@ -31,3 +33,10 @@ type (
 	type2   string
 	type3   byte
 )
+
+// TestInt2String test int 2 string
+func TestInt2String() {
+	var a int = 65
+	b := string(a)
+	fmt.Println(b)
+}

@@ -25,8 +25,10 @@ const (
 	YB          // 1 << (10*8)
 )
 
-func main() {
+// TestIotaMain main
+func TestIotaMain() {
 	fmt.Println(KB)
 	fmt.Println(MB)
 	fmt.Println(GB)
+
 }

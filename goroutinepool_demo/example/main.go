@@ -24,6 +24,7 @@ package main
 
 import (
 	"fmt"
+	"runtime"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -32,8 +33,11 @@ import (
 )
 
 var sum int32
+var goroutineNum int
 
 func myFunc(i interface{}) error {
+	goroutineNum = runtime.NumGoroutine()
+	fmt.Println("goroutine num:", goroutineNum)
 	n := i.(int32)
 	atomic.AddInt32(&sum, n)
 	fmt.Printf("run with %d\n", n)
@@ -41,6 +45,8 @@ func myFunc(i interface{}) error {
 }
 
 func demoFunc() error {
+	goroutineNum = runtime.NumGoroutine()
+	fmt.Println("goroutine num:", goroutineNum)
 	time.Sleep(10 * time.Millisecond)
 	fmt.Println("Hello World!")
 	return nil
@@ -65,20 +71,21 @@ func main() {
 	fmt.Printf("running goroutines: %d\n", ants.Running())
 	fmt.Printf("finish all tasks.\n")
 
-	// use the pool with a function
-	// set 10 the size of goroutine pool
-	p, _ := ants.NewPoolWithFunc(10, func(i interface{}) error {
-		myFunc(i)
-		wg.Done()
-		return nil
-	})
-	defer p.Release()
-	// submit tasks
-	for i := 0; i < runTimes; i++ {
-		wg.Add(1)
-		p.Serve(int32(i))
-	}
-	wg.Wait()
-	fmt.Printf("running goroutines: %d\n", p.Running())
-	fmt.Printf("finish all tasks, result is %d\n", sum)
+	// // use the pool with a function
+	// // set 10 the size of goroutine pool
+	// p, _ := ants.NewPoolWithFunc(10, func(i interface{}) error {
+	// 	myFunc(i)
+	// 	wg.Done()
+	// 	return nil
+	// })
+	// defer p.Release()
+	// // submit tasks
+	// for i := 0; i < runTimes; i++ {
+	// 	wg.Add(1)
+	// 	p.Serve(int32(i))
+	// }
+	// wg.Wait()
+	// fmt.Printf("running goroutines: %d\n", p.Running())
+	// fmt.Printf("finish all tasks, result is %d\n", sum)
+
 }
