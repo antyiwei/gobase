@@ -50,9 +50,8 @@ Channel类型的定义格式如下：
 ```go
     make(chan int, 100)
 ```
-
-容量(capacity)代表Channel容纳的最多的元素的数量，代表Channel的缓存的大小。
-如果没有设置容量，或者容量设置为0, 说明Channel没有缓存，只有sender和receiver都准备好了后它们的通讯(communication)才会发生(Blocking)。如果设置了缓存，就有可能不发生阻塞， 只有buffer满了后 send才会阻塞， 而只有缓存空了后receive才会阻塞。一个nil channel不会通信。
+`容量(capacity)代表Channel容纳的最多的元素的数量，代表Channel的缓存的大小。
+如果没有设置容量，或者容量设置为0, 说明Channel没有缓存，只有sender和receiver都准备好了后它们的通讯(communication)才会发生(Blocking)。如果设置了缓存，就有可能不发生阻塞， 只有buffer满了后 send才会阻塞， 而只有缓存空了后receive才会阻塞。一个nil channel不会通信。`
 
 可以通过内建的close方法可以关闭Channel。
 
@@ -138,9 +137,8 @@ send被执行前(proceed)通讯(communication)一直被阻塞着。如前所言�
 
 # Buffered Channels
 
-make的第二个参数指定缓存的大小：ch := make(chan int, 100)。
-
-通过缓存的使用，可以尽量避免阻塞，提供应用的性能。
+`make的第二个参数指定缓存的大小：ch := make(chan int, 100)。
+通过缓存的使用，可以尽量避免阻塞，提供应用的性能。`
 
 # Range
 

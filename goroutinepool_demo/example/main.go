@@ -71,21 +71,21 @@ func main() {
 	fmt.Printf("running goroutines: %d\n", ants.Running())
 	fmt.Printf("finish all tasks.\n")
 
-	// // use the pool with a function
-	// // set 10 the size of goroutine pool
-	// p, _ := ants.NewPoolWithFunc(10, func(i interface{}) error {
-	// 	myFunc(i)
-	// 	wg.Done()
-	// 	return nil
-	// })
-	// defer p.Release()
-	// // submit tasks
-	// for i := 0; i < runTimes; i++ {
-	// 	wg.Add(1)
-	// 	p.Serve(int32(i))
-	// }
-	// wg.Wait()
-	// fmt.Printf("running goroutines: %d\n", p.Running())
-	// fmt.Printf("finish all tasks, result is %d\n", sum)
+	// use the pool with a function
+	// set 10 the size of goroutine pool
+	p, _ := ants.NewPoolWithFunc(10, 1, func(i interface{}) error {
+		myFunc(i)
+		wg.Done()
+		return nil
+	})
+	defer p.Release()
+	// submit tasks
+	for i := 0; i < runTimes; i++ {
+		wg.Add(1)
+		p.Serve(int32(i))
+	}
+	wg.Wait()
+	fmt.Printf("running goroutines: %d\n", p.Running())
+	fmt.Printf("finish all tasks, result is %d\n", sum)
 
 }
