@@ -2,7 +2,6 @@ package bdchan
 
 import (
 	"fmt"
-	"runtime"
 	"time"
 )
 
@@ -93,8 +92,6 @@ func DoWork() {
 
 	time.Sleep(time.Second * 2)
 	fmt.Println(" my name is  antyiwei ")
-	goroutineNum := runtime.NumGoroutine()
-	fmt.Println("goroutine num:", goroutineNum)
 	// 等待任务完成
 	var result, ok = <-done
 	fmt.Println(result, ok)

@@ -25,12 +25,12 @@ func (this *MyStruct) GetName() string {
 	return this.name
 }
 
-func main() {
-	// ReflectZero()
-	// RelectOne()
-	RelectTwo()
-	// ReflectThree()
-}
+// func main() {
+// 	// ReflectZero()
+// 	// RelectOne()
+// 	RelectTwo()
+// 	// ReflectThree()
+// }
 func ReflectZero() {
 	a := &Person{"XiaoMing", 10}
 	t := reflect.TypeOf(*a) //必须取值，否则类型为空
