@@ -1,4 +1,4 @@
-package bdchan
+package main
 
 import (
 	"fmt"

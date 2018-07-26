@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"runtime"
 	"time"
-
-	bdchan "github.com/antyiwei/gobase/base/2.key-word/channel"
 )
 
 func main() {
@@ -13,9 +11,11 @@ func main() {
 	// TestIotaMain() // test iota main
 
 	// TestInt2String() // test int to string
-	ListenGorout()
-	bdchan.TestChannel() // test channel
+	// ListenGorout()
+	// bdchan.TestChannel() // test channel
 
+	// learning goroutine and channel
+	time.Sleep(60 * time.Second)
 }
 
 func ListenGorout() {
