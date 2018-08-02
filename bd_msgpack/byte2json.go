@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-
 	"strconv"
 
 	"github.com/vmihailenco/msgpack"
