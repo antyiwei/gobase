@@ -9,16 +9,16 @@ import (
 )
 
 /* 斐波那契  */
-const MaxNum = 1000
+const MaxNum = 1000000
 
 var fibs [MaxNum]*big.Int
 var facs [MaxNum]*big.Int
 
 func main() {
-	//factorialMain() // 阶乘
-	//	//fibonacciMain() // 斐波那契数列
+	factorialMain() // 阶乘
+	//fibonacciMain() // 斐波那契数列
 
-	FibMain() // 使用矩阵求值
+	//FibMain() // 使用矩阵求值
 }
 
 // 阶乘
@@ -53,6 +53,7 @@ func fibonacciMain() {
 	delete := end.Sub(start)
 	fmt.Printf("longCalculation took this amount of time:%s\n", delete)
 }
+
 func fibonacci(n int) (res *big.Int) {
 	// if fibs[n].Sign() != 0 {
 	// 	res = fibs[n]
@@ -83,9 +84,9 @@ func fibonacci(n int) (res *big.Int) {
 // 三种，矩证
 func FibMain() {
 	start := time.Now()
-	n := 1000000
+	n := MaxNum - 1
 	m := Fib(n)
-	fmt.Println("f(n)的结果是", m)
+	fmt.Printf("f(%d)的结果是:%d", n, m)
 	end := time.Now()
 	delta := end.Sub(start)
 	fmt.Printf("longCalculation took this amount of time: %s\n", delta)
