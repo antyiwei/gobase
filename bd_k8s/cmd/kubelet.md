@@ -23,7 +23,7 @@ HTTP服务器：kubelet还可以侦听HTTP并响应简单的API（目前未提�
 
 ## kubelet源码分析流程
 
-![目录结构图](../img/k8s/kubelet/1.png1)
+![目录结构图](../img/k8s/kubelet/1.png)
 
 1. main入口：k8s.io\kubernetes\cmd\kubelet\kubelet.go
 
@@ -53,9 +53,12 @@ HTTP服务器：kubelet还可以侦听HTTP并响应简单的API（目前未提�
 ```go
     // NewKubeletCommand使用默认参数创建*cobra.Command对象
     func NewKubeletCommand(stopCh <-chan struct{}) *cobra.Command {
-        cleanFlagSet := pflag.NewFlagSet(componentKubelet, pflag.ContinueOnError) // NewFlagSet返回一个新的空标志集，其中包含指定的名称，错误处理属性和SortFlags设置为true。
+    
+        // NewFlagSet返回一个新的空标志集，其中包含指定的名称，错误处理属性和SortFlags设置为true。
+        cleanFlagSet := pflag.NewFlagSet(componentKubelet, pflag.ContinueOnError) 
       
-      // SetNormalizeFunc允许您添加一个可以转换标志名称的函数。添加到FlagSet的标志将被翻译，然后当有任何东西试图查找也将被翻译的标志时。所以有可能创造 一个名为“getURL”的标志，并将其翻译为“geturl”。
+      // SetNormalizeFunc允许您添加一个可以转换标志名称的函数。
+      // 添加到FlagSet的标志将被翻译，然后当有任何东西试图查找也将被翻译的标志时。所以有可能创造 一个名为“getURL”的标志，并将其翻译为“geturl”。
       // 然后用户可以传递“--getUrl”，它也可以被翻译成“geturl”，一切都会正常工作。
         cleanFlagSet.SetNormalizeFunc(flag.WordSepNormalizeFunc)
         
@@ -74,7 +77,8 @@ HTTP服务器：kubelet还可以侦听HTTP并响应简单的API（目前未提�
             Use: componentKubelet,
             Long: `... 一大堆文字说明，此处略...`,// 一大堆文字说明，此处略
             
-            //  Kubelet具有特殊的标志解析要求来强制执行标志优先级规则，所以我们在下面的Run中手动完成所有解析。DisableFlagParsing = true提供传递给kubelet的完整标志集`args` arg to Run，没有眼镜蛇的干扰。
+            //  Kubelet具有特殊的标志解析要求来强制执行标志优先级规则，所以我们在下面的Run中手动完成所有解析。
+            // DisableFlagParsing = true提供传递给kubelet的完整标志集`args` arg to Run，没有眼镜蛇的干扰。
             DisableFlagParsing: true,
             Run: func(cmd *cobra.Command, args []string) {...}, // `这里面放置一个匿名函数，后面详细说，看着代码就是比较多`
         }
@@ -85,7 +89,8 @@ HTTP服务器：kubelet还可以侦听HTTP并响应简单的API（目前未提�
         // AddKubeletConfigFlags将特定kubeletconfig.KubeletConfiguration的标志添加到指定的FlagSet
         options.AddKubeletConfigFlags(cleanFlagSet, kubeletConfig)
         
-        // AddGlobalFlags explicitly registers flags that libraries (glog, verflag, etc.) register against the global flagsets from "flag" and "github.com/spf13/pflag". We do this in order to prevent unwanted flags from leaking into the Kubelet's flagset.
+        // AddGlobalFlags显式地注册库（glog，verflag等）从“flag”和“github.com/spf13/pflag”注册全局标志集的标志。
+        // 我们这样做是为了防止不需要的标志泄漏到Kubelet的标志集中。
         options.AddGlobalFlags(cleanFlagSet)
         cleanFlagSet.BoolP("help", "h", false, fmt.Sprintf("help for %s", cmd.Name()))
     
