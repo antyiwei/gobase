@@ -1,0 +1,73 @@
+1.主结构体的各字段 意思。
+2.重要的方法
+3.这一部分的目的
+4. 在哪里初始化。主要用于哪里
+
+5. 使用自己掌握的知识，将各个知识点，写个demo.总的串联一个，写点说明
+
+
+参考：
+我是怎么阅读kubernetes源代码的？：这种提出问题、解决问题的源码阅读方式是最值得推荐的，可以参考下 http://dockone.io/article/895
+kubernetes源码分析 – kubelet组件：使用思维导图阅读源码是向这位博主学习的 https://blog.csdn.net/zhaoguoguang/article/details/51225553
+【原创】k8s源码分析——kube-apiserver分析（1）：写的很渣，不知道博主分析源码是做什么的 https://blog.csdn.net/screscent/article/details/50923055
+
+图解kubernetes https://mp.weixin.qq.com/s/BTgYpSHUXaAEYjvrCEPK5A
+
+K8s 介绍
+
+Kubernetes（k8s）是自动化容器操作的开源平台，这些操作包括部署，调度和节点集群间扩展。
+
+使用Kubernetes可以： 
+1. 自动化容器的部署和复制 
+2. 随时扩展或收缩容器规模 
+3. 将容器组织成组，并且提供容器间的负载均衡 
+4. 很容易地升级应用程序容器的新版本 
+4. 提供容器弹性，如果容器失效就替换它，等等…
+
+Kubernetes解决的问题： 
+1. 调度 - 容器应该在哪个机器上运行 
+2. 生命周期和健康状况 - 容器在无错的条件下运行 
+3. 服务发现 - 容器在哪，怎样与它通信 
+4. 监控 - 容器是否运行正常 
+5. 认证 - 谁能访问容器 
+6. 容器聚合 - 如何将多个容器合并成一个工程
+
+Kubernetes组件组成： 
+1. kubectl 
+客户端命令行工具，将接受的命令格式化后发送给kube-apiserver，作为整个系统的操作入口。 
+2. kube-apiserver 
+作为整个系统的控制入口，以REST API服务提供接口。 
+3. kube-controller-manager 
+用来执行整个系统中的后台任务，包括节点状态状况、Pod个数、Pods和Service的关联等。 
+4. kube-scheduler 
+负责节点资源管理，接受来自kube-apiserver创建Pods任务，并分配到某个节点。 
+5. etcd 
+负责节点间的服务发现和配置共享。 
+6. kube-proxy 
+运行在每个计算节点上，负责Pod网络代理。定时从etcd获取到service信息来做相应的策略。 
+7. kubelet 
+运行在每个计算节点上，作为agent，接受分配该节点的Pods任务及管理容器，周期性获取容器状态，反馈给kube-apiserver。 
+8. DNS 
+一个可选的DNS服务，用于为每个Service对象创建DNS记录，这样所有的Pod就可以通过DNS访问服务了。
+
+
+Kubelet 「节点上的 Pod 管家」
+负责 Node 节点上 Pod 的创建、修改、监控、删除等全生命周期的管理。
+
+定时上报本地 Node 的状态信息给 API Server。
+
+Kubelet 是 Master API Server 和 Minion / Node 之间的桥梁，接收 Master API Server 分配给它的 Commands 和 Work。
+
+Kubelet 通过 Kube ApiServer 间接与 Etcd 集群交互来读取集群配置信息。
+
+Kubelet 在 Node 上做的主要工作具体如下：1. 设置容器的环境变量、给容器绑定 Volume、给容器绑定 Port、根据指定的 Pod 运行一个单一容器、给指定的 Pod 创建 Network 容器。2. 同步 Pod 的状态，从 cAdvisor 获取 Container Info、 Pod Info、 Root Info、 Machine info。3. 在容器中运行命令、杀死容器、删除 Pod 的所有容器。
+
+
+kubelet 分析博客
+https://www.cnblogs.com/slgkaifa/p/7308368.html
+
+
+
+
+// Package cobra is a commander providing a simple interface to create powerful modern CLI interfaces. In addition to providing an interface, Cobra simultaneously provides a controller to organize your application code.
+// Package cobra是一个指挥官，提供了一个简单的界面来创建强大的现代CLI界面。除了提供界面外，Cobra还提供了一个控制器来组织您的应用程序代码。
