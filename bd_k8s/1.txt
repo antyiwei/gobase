@@ -13,42 +13,6 @@ kubernetes源码分析 – kubelet组件：使用思维导图阅读源码是向�
 
 图解kubernetes https://mp.weixin.qq.com/s/BTgYpSHUXaAEYjvrCEPK5A
 
-K8s 介绍
-
-Kubernetes（k8s）是自动化容器操作的开源平台，这些操作包括部署，调度和节点集群间扩展。
-
-使用Kubernetes可以： 
-1. 自动化容器的部署和复制 
-2. 随时扩展或收缩容器规模 
-3. 将容器组织成组，并且提供容器间的负载均衡 
-4. 很容易地升级应用程序容器的新版本 
-4. 提供容器弹性，如果容器失效就替换它，等等…
-
-Kubernetes解决的问题： 
-1. 调度 - 容器应该在哪个机器上运行 
-2. 生命周期和健康状况 - 容器在无错的条件下运行 
-3. 服务发现 - 容器在哪，怎样与它通信 
-4. 监控 - 容器是否运行正常 
-5. 认证 - 谁能访问容器 
-6. 容器聚合 - 如何将多个容器合并成一个工程
-
-Kubernetes组件组成： 
-1. kubectl 
-客户端命令行工具，将接受的命令格式化后发送给kube-apiserver，作为整个系统的操作入口。 
-2. kube-apiserver 
-作为整个系统的控制入口，以REST API服务提供接口。 
-3. kube-controller-manager 
-用来执行整个系统中的后台任务，包括节点状态状况、Pod个数、Pods和Service的关联等。 
-4. kube-scheduler 
-负责节点资源管理，接受来自kube-apiserver创建Pods任务，并分配到某个节点。 
-5. etcd 
-负责节点间的服务发现和配置共享。 
-6. kube-proxy 
-运行在每个计算节点上，负责Pod网络代理。定时从etcd获取到service信息来做相应的策略。 
-7. kubelet 
-运行在每个计算节点上，作为agent，接受分配该节点的Pods任务及管理容器，周期性获取容器状态，反馈给kube-apiserver。 
-8. DNS 
-一个可选的DNS服务，用于为每个Service对象创建DNS记录，这样所有的Pod就可以通过DNS访问服务了。
 
 
 Kubelet 「节点上的 Pod 管家」
@@ -71,3 +35,16 @@ https://www.cnblogs.com/slgkaifa/p/7308368.html
 
 // Package cobra is a commander providing a simple interface to create powerful modern CLI interfaces. In addition to providing an interface, Cobra simultaneously provides a controller to organize your application code.
 // Package cobra是一个指挥官，提供了一个简单的界面来创建强大的现代CLI界面。除了提供界面外，Cobra还提供了一个控制器来组织您的应用程序代码。
+
+
+
+# kubelet
+kubelet是在每个上运行的主要“节点代理”节点。 kubelet适用于PodSpec。 PodSpec是YAML或JSON对象描述一个pod。 kubelet采用通过提供的一组PodSpecs各种机制（主要通过apiserver）并确保容器在那些PodSpecs中描述的运行和健康。 kubelet无法管理不是由Kubernetes创造的容器。
+
+除了来自apiserver的PodSpec之外，容器有三种方式清单可以提供给Kubelet。
+
+File：Path在命令行上作为标志传递。将监视此路径下的文件定期更新。监控时间默认为20秒，可配置通过一面旗帜。
+
+HTTP端点：在命令行上作为参数传递的HTTP端点。这个端点每20秒检查一次（也可以用标志配置）。
+
+HTTP服务器：kubelet还可以侦听HTTP并响应简单的API（目前未提及）提交新清单。

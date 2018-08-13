@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"runtime"
 
 	"github.com/shopspring/decimal"
 )
@@ -43,4 +44,6 @@ func main() {
 		fmt.Println(add.Float64())
 	}
 
+	//	 打印当前系统
+	fmt.Println(runtime.GOOS)
 }
