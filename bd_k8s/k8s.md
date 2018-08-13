@@ -75,8 +75,8 @@ Kubernetes源码分析从cmd包进行分析:cmd作为Kubernetes主入口，源�
 *
 
 
-
-## 由于资料来自网络
+=======================================================================================================================
+#### 部分资料来自网络
 
 [announcement]: https://cncf.io/news/announcement/2015/07/new-cloud-native-computing-foundation-drive-alignment-among-container
 [Borg]: https://research.google.com/pubs/pub43438.html
@@ -96,4 +96,3 @@ Kubernetes源码分析从cmd包进行分析:cmd作为Kubernetes主入口，源�
 [Submit Queue Widget]: http://submit-queue.k8s.io/health.svg?v=1
 [troubleshooting guide]: https://kubernetes.io/docs/tasks/debug-application-cluster/troubleshooting/
 
-[![Analytics](https://kubernetes-site.appspot.com/UA-36037335-10/GitHub/README.md?pixel)]()
