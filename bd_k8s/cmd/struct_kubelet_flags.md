@@ -47,17 +47,17 @@ type KubeletFlags struct {
 
 	// rootDirectory是放置文件夹文件的目录路径（卷安装等）.
 	RootDirectory string
-
-    // Kubelet将使用此目录检查下载的配置并跟踪配置运行状况。
-    // Kubelet将创建此目录（如果该目录尚不存在）。
-    // 路径可以是绝对的或相对的;相对路径位于Kubelet的当前工作目录下。
-    // 提供此标志可启用动态kubelet配置。
-    // 要使用此标志，必须启用DynamicKubeletConfig功能门.
+	
+	// Kubelet将使用此目录检查下载的配置并跟踪配置运行状况。
+	// Kubelet将创建此目录（如果该目录尚不存在）。
+	// 路径可以是绝对的或相对的;相对路径位于Kubelet的当前工作目录下。 
+	// 提供此标志可启用动态kubelet配置。 
+	// 要使用此标志，必须启用DynamicKubeletConfig功能门.
 	DynamicConfigDir flag.StringFlag
-
-    // Kubelet将从此文件加载其初始配置。
-    //路径可以是绝对的或相对的;相对路径位于Kubelet的当前工作目录下。
-    //省略此标志以使用内置默认配置值和标志的组合。
+	
+	// Kubelet将从此文件加载其初始配置。
+	// 路径可以是绝对的或相对的;相对路径位于Kubelet的当前工作目录下。 
+	// 省略此标志以使用内置默认配置值和标志的组合。
 	KubeletConfigFile string
 
 	// registerNode启用自动注册apiserver.
@@ -68,8 +68,8 @@ type KubeletFlags struct {
 
 	// WindowsService 如果kubelet在Windows上作为服务运行，则应将WindowsService设置为true。其相应的标志仅在Windows版本中注册.
 	WindowsService bool
-
-    //=============================华丽的分割线=======================================================
+	
+	//=============================华丽的分割线=======================================================
 
 	// EXPERIMENTAL FLAGS 实验标志
 	//  不安全的sysctl或sysctl模式的白名单（以*结尾）。 +可选
@@ -94,8 +94,8 @@ type KubeletFlags struct {
 	ExperimentalCheckNodeCapabilitiesBeforeMount bool
 	// This flag, if set, will avoid including `EvictionHard` limits while computing Node Allocatable.
 	// Refer to [Node Allocatable](https://git.k8s.io/community/contributors/design-proposals/node-allocatable.md) doc for more information.
-	// 译：如果设置了此标志，则在计算Node Allocatable时将避免包含`EvictionHard`限制。
-    // 译：有关详细信息，请参阅[Node Allocatable]（https://git.k8s.io/community/contributors/design-proposals/node-allocatable.md）doc。
+	// 译：如果设置了此标志，则在计算Node Allocatable时将避免包含`EvictionHard`限制。 
+	// 译：有关详细信息，请参阅[Node Allocatable]（https://git.k8s.io/community/contributors/design-proposals/node-allocatable.md）doc。
 	ExperimentalNodeAllocatableIgnoreEvictionThreshold bool
 	// NodeLabel是在群集中注册节点时要添加的节点标签
 	NodeLabels map[string]string
@@ -103,7 +103,7 @@ type KubeletFlags struct {
 	VolumePluginDir string
 	// lockFilePath是kubelet用作锁定文件的路径。它使用此文件作为锁，以与可能正在运行的其他kubelet进程同步
 	LockFilePath string
-    // ExitOnLockContention是一个标志，表示kubelet正在运行在“bootstrap”模式下。这需要设置'LockFilePath'。这将导致kubelet监听锁定文件上的inotify事件，释放它并在另一个进程尝试打开该文件时退出。
+	// ExitOnLockContention是一个标志，表示kubelet正在运行在“bootstrap”模式下。这需要设置'LockFilePath'。这将导致kubelet监听锁定文件上的inotify事件，释放它并在另一个进程尝试打开该文件时退出。
 	ExitOnLockContention bool
 	// seccompProfileRoot是seccomp配置文件的目录路径.
 	SeccompProfileRoot string
@@ -111,8 +111,8 @@ type KubeletFlags struct {
 	BootstrapCheckpointPath string
 	// NodeStatusMaxImages会限制Node.Status.Images中报告的图像数量。这是一个实验性的短期标志，有助于节点可扩展性。
 	NodeStatusMaxImages int32
-
-    //=============================华丽的分割线=======================================================
+	
+	//=============================华丽的分割线=======================================================
 
 	// DEPRECATED FLAGS 弃用
 	// minimumGCAge是成品容器在收集垃圾之前的最小年龄.
@@ -131,7 +131,7 @@ type KubeletFlags struct {
 	KeepTerminatedPodVolumes bool
 	// allowPrivileged使容器能够请求特权模式。默认为true。
 	AllowPrivileged bool
-    // hostNetworkSources是一个以逗号分隔的源列表Kubelet允许pod使用主机网络。默认为“*”。有效选项是“file”，“http”，“api”和“*”（所有来源）。
+	// hostNetworkSources是一个以逗号分隔的源列表Kubelet允许pod使用主机网络。默认为“*”。有效选项是“file”，“http”，“api”和“*”（所有来源）。
 	HostNetworkSources []string
 	// hostPIDSources是一个以逗号分隔的源列表，Kubelet允许pod使用主机pid命名空间。默认为“*”.
 	HostPIDSources []string

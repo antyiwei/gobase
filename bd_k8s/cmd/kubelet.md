@@ -106,7 +106,7 @@ func NewKubeletCommand(stopCh <-chan struct{}) *cobra.Command {
 }
 ```
 
-[KubeletFlags结构（需要多看看）](kubelet_flags_struct.md)
+[KubeletFlags结构（需要多看看）](struct_kubelet_flags.md)
 
 上面的两个地方，内容篇幅过大，都删除了，做了文字说明。如果代码删减后，代码看着就比较清爽。详细看注释说明！！！
  
@@ -114,7 +114,7 @@ func NewKubeletCommand(stopCh <-chan struct{}) *cobra.Command {
  
  这个主要是否分装方法传入的命令，进行分装处理；这个结构里面有一个run()接口，k8s 里面使用匿名函数.也可以理解为面向对象中的重写功能吧
 
-[Command结构（需要多看看）](command_struct.md) 
+[Command结构（需要多看看）](struct_command.md) 
 
 现在主要看看command中的Run()接口内容：
 
