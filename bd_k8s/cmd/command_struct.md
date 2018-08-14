@@ -46,33 +46,33 @@
         // 版本定义此命令的版本。如果此值为非空且命令未定义“version”标志，则将在命令中添加“version”布尔标志，如果指定，将打印“Version”变量的内容.
         Version string
     
-        // The *Run functions are executed in the following order:
+        //   * 运行功能按以下顺序执行:
         //   * PersistentPreRun()
         //   * PreRun()
         //   * Run()
         //   * PostRun()
         //   * PersistentPostRun()
-        // All functions get the same args, the arguments after the command name.
+        // 所有函数都获得相同的args，即命令名后面的参数.
         //
-        // PersistentPreRun: children of this command will inherit and execute.
+        // PersistentPreRun：此命令的子节点将继承并执行.
         PersistentPreRun func(cmd *Command, args []string)
-        // PersistentPreRunE: PersistentPreRun but returns an error.
+        // PersistentPreRunE：PersistentPreRun但返回错误.
         PersistentPreRunE func(cmd *Command, args []string) error
-        // PreRun: children of this command will not inherit.
+        // PreRun：此命令的子节点不会继承。
         PreRun func(cmd *Command, args []string)
-        // PreRunE: PreRun but returns an error.
+        // PreRunE：PreRun但返回错误。
         PreRunE func(cmd *Command, args []string) error
         // Run: 通常是实际的工作功能。大多数命令只会实现这一点.
         Run func(cmd *Command, args []string)
-        // RunE: Run but returns an error.
+        // RunE：运行但返回错误。
         RunE func(cmd *Command, args []string) error
-        // PostRun: run after the Run command.
+        // PostRun：运行Run命令后运行。
         PostRun func(cmd *Command, args []string)
-        // PostRunE: PostRun but returns an error.
+        // PostRunE：PostRun但返回错误。
         PostRunE func(cmd *Command, args []string) error
-        // PersistentPostRun: children of this command will inherit and execute after PostRun.
+        // PersistentPostRun：此命令的子节点将在PostRun之后继承并执行。
         PersistentPostRun func(cmd *Command, args []string)
-        // PersistentPostRunE: PersistentPostRun but returns an error.
+        // PersistentPostRunE：PersistentPostRun但返回错误。
         PersistentPostRunE func(cmd *Command, args []string) error
     
         // SilenceErrors是下游安静错误的一种选择。
@@ -90,67 +90,63 @@
         // 在打印帮助或生成文档时，DisableFlagsInUseLine将禁用在命令的使用行中添加[flags]
         DisableFlagsInUseLine bool
     
-        // DisableSuggestions disables the suggestions based on Levenshtein distance
-        // that go along with 'unknown command' messages.
+        // DisableSuggestions禁用基于Levenshtein距离的建议以及“未知命令”消息。
         DisableSuggestions bool
-        // SuggestionsMinimumDistance defines minimum levenshtein distance to display suggestions.
-        // Must be > 0.
+        // SuggestionsMinimumDistance定义显示建议的最小levenshtein距离。必须> 0。
         SuggestionsMinimumDistance int
     
-        // TraverseChildren parses flags on all parents before executing child command.
+        // TraverseChildren在执行子命令之前解析所有父项的标志。
         TraverseChildren bool
     
-        // commands is the list of commands supported by this program.
+        // commands 是此程序支持的命令列表。
         commands []*Command
-        // parent is a parent command for this command.
+        // parent是此命令的父命令。
         parent *Command
         // Max lengths of commands' string lengths for use in padding.
+        // 译：用于填充的命令字符串长度的最大长度。
         commandsMaxUseLen         int
         commandsMaxCommandPathLen int
         commandsMaxNameLen        int
-        // commandsAreSorted defines, if command slice are sorted or not.
+        // 如果命令切片是否已排序，则commandsAreSorted定义。
         commandsAreSorted bool
-        // commandCalledAs is the name or alias value used to call this command.
+        // commandCalledAs是用于调用此命令的名称或别名值。
         commandCalledAs struct {
             name   string
             called bool
         }
     
-        // args is actual args parsed from flags.
+        // args是从flags解析的实际args。
         args []string
-        // flagErrorBuf contains all error messages from pflag.
+        // flagErrorBuf包含来自pflag的所有错误消息。
         flagErrorBuf *bytes.Buffer
-        // flags is full set of flags.
+        // flags是一整套标志。
         flags *flag.FlagSet
-        // pflags contains persistent flags.
+        // pflags包含持久标志。
         pflags *flag.FlagSet
-        // lflags contains local flags.
+        // lflags包含本地标志
         lflags *flag.FlagSet
         // iflags contains inherited flags.
         iflags *flag.FlagSet
-        // parentsPflags is all persistent flags of cmd's parents.
+        // parentsPflags是cmd父母的所有持久标志。
         parentsPflags *flag.FlagSet
-        // globNormFunc is the global normalization function
-        // that we can use on every pflag set and children commands
+        // globNormFunc是我们可以在每个pflag set和children命令上使用的全局规范化函数
         globNormFunc func(f *flag.FlagSet, name string) flag.NormalizedName
     
-        // output is an output writer defined by user.
+        // output是用户定义的输出writer.
         output io.Writer
-        // usageFunc is usage func defined by user.
+        // usageFunc是user定义的用法func.
         usageFunc func(*Command) error
-        // usageTemplate is usage template defined by user.
+        // usageTemplate是用户定义的用法模板。
         usageTemplate string
-        // flagErrorFunc is func defined by user and it's called when the parsing of
-        // flags returns an error.
+        // flagErrorFunc是用户定义的func，当标志解析返回错误时调用它。
         flagErrorFunc func(*Command, error) error
-        // helpTemplate is help template defined by user.
+        // helpTemplate是用户定义的帮助模板.
         helpTemplate string
-        // helpFunc is help func defined by user.
+        // helpFunc是用户定义的help func.
         helpFunc func(*Command, []string)
-        // helpCommand is command with usage 'help'. If it's not defined by user,
-        // cobra uses default help command.
+        // helpCommand是使用'help'的命令。如果它不是由用户定义的，则cobra使用默认帮助命令。
         helpCommand *Command
-        // versionTemplate is the version template defined by user.
+        // versionTemplate是用户定义的版本模板。
         versionTemplate string
     }
 ```

@@ -1,4 +1,5 @@
-# kubelet 结构细说
+# KubeletFlags 结构细说
+
 ```go
 const defaultRootDir = "/var/lib/kubelet"
 
@@ -17,154 +18,128 @@ type KubeletFlags struct {
 	// 立刻崩溃，而不是吃恐慌.
 	ReallyCrashForTesting bool
 
-	// TODO(mtaufen): It is increasingly looking like nobody actually uses the
-	//                Kubelet's runonce mode anymore, so it may be a candidate
-	//                for deprecation and removal.
-	// If runOnce is true, the Kubelet will check the API server once for pods,
-	// run those in addition to the pods specified by static pod files, and exit.
+	// TODO(mtaufen): 越来越多的人看起来没有人真正使用过  Kubelet的runonce模式已经存在，因此它可能是弃用和删除的候选者。
+	//    如果runOnce为true，则Kubelet将检查API服务器一次是否为pod，运行除静态pod文件指定的pod之外的那些，并退出.
 	RunOnce bool
 
-	// enableServer enables the Kubelet's server
+	// enableServer启用Kubelet的服务器
 	EnableServer bool
 
-	// HostnameOverride is the hostname used to identify the kubelet instead
-	// of the actual hostname.
+	// HostnameOverride是用于标识kubelet而不是实际主机名的主机名.
 	HostnameOverride string
-	// NodeIP is IP address of the node.
-	// If set, kubelet will use this IP address for the node.
+	// NodeIP是节点的IP地址。如果设置，则kubelet将使用此IP地址作为节点.
 	NodeIP string
 
-	// This flag, if set, sets the unique id of the instance that an external provider (i.e. cloudprovider)
-	// can use to identify a specific node
+	// 此标志（如果已设置）设置外部提供程序（即cloudprovider）可用于标识特定节点的实例的唯一ID
 	ProviderID string
 
 	// Container-runtime-specific options.
 	config.ContainerRuntimeOptions
 
-	// certDirectory is the directory where the TLS certs are located (by
-	// default /var/run/kubernetes). If tlsCertFile and tlsPrivateKeyFile
-	// are provided, this flag will be ignored.
+	// certDirectory是TLS证书所在的目录（默认情况下为/var/run/kubernetes）。如果提供了tlsCertFile和tlsPrivateKeyFile，则将忽略此标志。
 	CertDirectory string
 
-	// cloudProvider is the provider for cloud services.
-	// +optional
+	// cloudProvider是云服务的提供商。 +可选
 	CloudProvider string
 
-	// cloudConfigFile is the path to the cloud provider configuration file.
-	// +optional
+	// cloudConfigFile是云提供程序配置文件的路径。 +可选
 	CloudConfigFile string
 
-	// rootDirectory is the directory path to place kubelet files (volume
-	// mounts,etc).
+	// rootDirectory是放置文件夹文件的目录路径（卷安装等）.
 	RootDirectory string
 
-	// The Kubelet will use this directory for checkpointing downloaded configurations and tracking configuration health.
-	// The Kubelet will create this directory if it does not already exist.
-	// The path may be absolute or relative; relative paths are under the Kubelet's current working directory.
-	// Providing this flag enables dynamic kubelet configuration.
-	// To use this flag, the DynamicKubeletConfig feature gate must be enabled.
+    // Kubelet将使用此目录检查下载的配置并跟踪配置运行状况。
+    // Kubelet将创建此目录（如果该目录尚不存在）。
+    // 路径可以是绝对的或相对的;相对路径位于Kubelet的当前工作目录下。
+    // 提供此标志可启用动态kubelet配置。
+    // 要使用此标志，必须启用DynamicKubeletConfig功能门.
 	DynamicConfigDir flag.StringFlag
 
-	// The Kubelet will load its initial configuration from this file.
-	// The path may be absolute or relative; relative paths are under the Kubelet's current working directory.
-	// Omit this flag to use the combination of built-in default configuration values and flags.
+    // Kubelet将从此文件加载其初始配置。
+    //路径可以是绝对的或相对的;相对路径位于Kubelet的当前工作目录下。
+    //省略此标志以使用内置默认配置值和标志的组合。
 	KubeletConfigFile string
 
-	// registerNode enables automatic registration with the apiserver.
+	// registerNode启用自动注册apiserver.
 	RegisterNode bool
 
-	// registerWithTaints are an array of taints to add to a node object when
-	// the kubelet registers itself. This only takes effect when registerNode
-	// is true and upon the initial registration of the node.
+	// registerWithTaints是当kubelet注册自身时要添加到节点对象的taints数组。这仅在registerNode为true且初始注册节点时生效。
 	RegisterWithTaints []core.Taint
 
-	// WindowsService should be set to true if kubelet is running as a service on Windows.
-	// Its corresponding flag only gets registered in Windows builds.
+	// WindowsService 如果kubelet在Windows上作为服务运行，则应将WindowsService设置为true。其相应的标志仅在Windows版本中注册.
 	WindowsService bool
 
-	// EXPERIMENTAL FLAGS
-	// Whitelist of unsafe sysctls or sysctl patterns (ending in *).
-	// +optional
+    //=============================华丽的分割线=======================================================
+
+	// EXPERIMENTAL FLAGS 实验标志
+	//  不安全的sysctl或sysctl模式的白名单（以*结尾）。 +可选
 	AllowedUnsafeSysctls []string
-	// containerized should be set to true if kubelet is running in a container.
+	// containerized 如果kubelet在容器中运行，则应将containerized设置为true.
 	Containerized bool
 	// remoteRuntimeEndpoint is the endpoint of remote runtime service
+	// 译：remoteRuntimeEndpoint是远程运行时服务的端点
 	RemoteRuntimeEndpoint string
 	// remoteImageEndpoint is the endpoint of remote image service
+	// 译：remoteImageEndpoint是远程图像服务的端点
 	RemoteImageEndpoint string
 	// experimentalMounterPath is the path of mounter binary. Leave empty to use the default mount path
+	// 译：experimentalMounterPath是mounter二进制文件的路径。保留为空以使用默认装载路径
 	ExperimentalMounterPath string
-	// If enabled, the kubelet will integrate with the kernel memcg notification to determine if memory eviction thresholds are crossed rather than polling.
-	// +optional
+	// 译：如果启用，则kubelet将与内核memcg通知集成，以确定是否超过了内存逐出阈值而不是轮询。  +可选
 	ExperimentalKernelMemcgNotification bool
 	// This flag, if set, enables a check prior to mount operations to verify that the required components
 	// (binaries, etc.) to mount the volume are available on the underlying node. If the check is enabled
 	// and fails the mount operation fails.
+	// 译：此标志（如果已设置）在安装操作之前启用检查，以验证安装卷所需的组件（二进制文件等）在基础节点上是否可用。如果启用了检查并且失败，则安装操作将失败
 	ExperimentalCheckNodeCapabilitiesBeforeMount bool
 	// This flag, if set, will avoid including `EvictionHard` limits while computing Node Allocatable.
 	// Refer to [Node Allocatable](https://git.k8s.io/community/contributors/design-proposals/node-allocatable.md) doc for more information.
+	// 译：如果设置了此标志，则在计算Node Allocatable时将避免包含`EvictionHard`限制。
+    // 译：有关详细信息，请参阅[Node Allocatable]（https://git.k8s.io/community/contributors/design-proposals/node-allocatable.md）doc。
 	ExperimentalNodeAllocatableIgnoreEvictionThreshold bool
-	// Node Labels are the node labels to add when registering the node in the cluster
+	// NodeLabel是在群集中注册节点时要添加的节点标签
 	NodeLabels map[string]string
-	// volumePluginDir is the full path of the directory in which to search
-	// for additional third party volume plugins
+	// volumePluginDir是搜索其他第三方卷插件的目录的完整路径
 	VolumePluginDir string
-	// lockFilePath is the path that kubelet will use to as a lock file.
-	// It uses this file as a lock to synchronize with other kubelet processes
-	// that may be running.
+	// lockFilePath是kubelet用作锁定文件的路径。它使用此文件作为锁，以与可能正在运行的其他kubelet进程同步
 	LockFilePath string
-	// ExitOnLockContention is a flag that signifies to the kubelet that it is running
-	// in "bootstrap" mode. This requires that 'LockFilePath' has been set.
-	// This will cause the kubelet to listen to inotify events on the lock file,
-	// releasing it and exiting when another process tries to open that file.
+    // ExitOnLockContention是一个标志，表示kubelet正在运行在“bootstrap”模式下。这需要设置'LockFilePath'。这将导致kubelet监听锁定文件上的inotify事件，释放它并在另一个进程尝试打开该文件时退出。
 	ExitOnLockContention bool
-	// seccompProfileRoot is the directory path for seccomp profiles.
+	// seccompProfileRoot是seccomp配置文件的目录路径.
 	SeccompProfileRoot string
-	// bootstrapCheckpointPath is the path to the directory containing pod checkpoints to
-	// run on restore
+	// bootstrapCheckpointPath是包含要在还原时运行的pod检查点的目录的路径。
 	BootstrapCheckpointPath string
-	// NodeStatusMaxImages caps the number of images reported in Node.Status.Images.
-	// This is an experimental, short-term flag to help with node scalability.
+	// NodeStatusMaxImages会限制Node.Status.Images中报告的图像数量。这是一个实验性的短期标志，有助于节点可扩展性。
 	NodeStatusMaxImages int32
 
-	// DEPRECATED FLAGS
-	// minimumGCAge is the minimum age for a finished container before it is
-	// garbage collected.
+    //=============================华丽的分割线=======================================================
+
+	// DEPRECATED FLAGS 弃用
+	// minimumGCAge是成品容器在收集垃圾之前的最小年龄.
 	MinimumGCAge metav1.Duration
-	// maxPerPodContainerCount is the maximum number of old instances to
-	// retain per container. Each container takes up some disk space.
+	// maxPerPodContainerCount是每个容器保留的最大旧实例数。每个容器占用一些磁盘空间.
 	MaxPerPodContainerCount int32
-	// maxContainerCount is the maximum number of old instances of containers
-	// to retain globally. Each container takes up some disk space.
+	//maxContainerCount是全局保留的旧容器实例的最大数量。每个容器占用一些磁盘空间
 	MaxContainerCount int32
-	// masterServiceNamespace is The namespace from which the kubernetes
-	// master services should be injected into pods.
+	// masterServiceNamespace是应该将kubernetes主服务注入pod的命名空间.
 	MasterServiceNamespace string
-	// registerSchedulable tells the kubelet to register the node as
-	// schedulable. Won't have any effect if register-node is false.
-	// DEPRECATED: use registerWithTaints instead
+	// registerSchedulable告诉kubelet将节点注册为可调度的。如果register-node为false，则不会有任何影响。 DEPRECATED：改为使用registerWithTaints
 	RegisterSchedulable bool
 	// nonMasqueradeCIDR configures masquerading: traffic to IPs outside this range will use IP masquerade.
 	NonMasqueradeCIDR string
-	// This flag, if set, instructs the kubelet to keep volumes from terminated pods mounted to the node.
-	// This can be useful for debugging volume related issues.
+	// 此标志（如果已设置）指示kubelet保持已终止的pod安装到节点的卷。这对于调试与卷相关的问题非常有用。
 	KeepTerminatedPodVolumes bool
-	// allowPrivileged enables containers to request privileged mode.
-	// Defaults to true.
+	// allowPrivileged使容器能够请求特权模式。默认为true。
 	AllowPrivileged bool
-	// hostNetworkSources is a comma-separated list of sources from which the
-	// Kubelet allows pods to use of host network. Defaults to "*". Valid
-	// options are "file", "http", "api", and "*" (all sources).
+    // hostNetworkSources是一个以逗号分隔的源列表Kubelet允许pod使用主机网络。默认为“*”。有效选项是“file”，“http”，“api”和“*”（所有来源）。
 	HostNetworkSources []string
-	// hostPIDSources is a comma-separated list of sources from which the
-	// Kubelet allows pods to use the host pid namespace. Defaults to "*".
+	// hostPIDSources是一个以逗号分隔的源列表，Kubelet允许pod使用主机pid命名空间。默认为“*”.
 	HostPIDSources []string
-	// hostIPCSources is a comma-separated list of sources from which the
-	// Kubelet allows pods to use the host ipc namespace. Defaults to "*".
+	// hostIPCSources是一个以逗号分隔的源列表，Kubelet允许pod使用host ipc命名空间。默认为“*”.
 	HostIPCSources []string
 }
 
-// NewKubeletFlags will create a new KubeletFlags with default values
+// NewKubeletFlags将使用默认值创建一个新的KubeletFlags
 func NewKubeletFlags() *KubeletFlags {
 	remoteRuntimeEndpoint := ""
 	if runtime.GOOS == "linux" {

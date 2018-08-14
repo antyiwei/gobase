@@ -48,62 +48,62 @@ HTTP服务器：kubelet还可以侦听HTTP并响应简单的API（目前未提�
 2. NewKubeletCommand函数分析
 
 ```go
-    // NewKubeletCommand使用默认参数创建*cobra.Command对象
-    func NewKubeletCommand(stopCh <-chan struct{}) *cobra.Command {
+// NewKubeletCommand使用默认参数创建*cobra.Command对象
+func NewKubeletCommand(stopCh <-chan struct{}) *cobra.Command {
+
+    // NewFlagSet返回一个新的空标志集，其中包含指定的名称，错误处理属性和SortFlags设置为true。
+    cleanFlagSet := pflag.NewFlagSet(componentKubelet, pflag.ContinueOnError) 
+  
+    // SetNormalizeFunc允许您添加一个可以转换标志名称的函数。
+    // 添加到FlagSet的标志将被翻译，然后当有任何东西试图查找也将被翻译的标志时。所以有可能创造 一个名为“getURL”的标志，并将其翻译为“geturl”。
+    // 然后用户可以传递“--getUrl”，它也可以被翻译成“geturl”，一切都会正常工作。
+    cleanFlagSet.SetNormalizeFunc(flag.WordSepNormalizeFunc)
     
-        // NewFlagSet返回一个新的空标志集，其中包含指定的名称，错误处理属性和SortFlags设置为true。
-        cleanFlagSet := pflag.NewFlagSet(componentKubelet, pflag.ContinueOnError) 
-      
-        // SetNormalizeFunc允许您添加一个可以转换标志名称的函数。
-        // 添加到FlagSet的标志将被翻译，然后当有任何东西试图查找也将被翻译的标志时。所以有可能创造 一个名为“getURL”的标志，并将其翻译为“geturl”。
-        // 然后用户可以传递“--getUrl”，它也可以被翻译成“geturl”，一切都会正常工作。
-        cleanFlagSet.SetNormalizeFunc(flag.WordSepNormalizeFunc)
-        
-        // NewKubeletFlags将使用默认值创建一个新的KubeletFlags
-        kubeletFlags := options.NewKubeletFlags()
-        
-        // NewKubeletConfiguration将使用默认值创建新的KubeletConfiguration
-        kubeletConfig, err := options.NewKubeletConfiguration()
-        // programmer error
-        if err != nil {
-            glog.Fatal(err)
-        }
+    // NewKubeletFlags将使用默认值创建一个新的KubeletFlags
+    kubeletFlags := options.NewKubeletFlags()
     
-        // 分装 command 结构
-        cmd := &cobra.Command{
-            Use: componentKubelet,
-            Long: `... 一大堆文字说明，此处略...`,// 一大堆文字说明，此处略
-            
-            //  Kubelet具有特殊的标志解析要求来强制执行标志优先级规则，所以我们在下面的Run中手动完成所有解析。
-            // DisableFlagParsing = true提供传递给kubelet的完整标志集`args` arg to Run，没有眼镜蛇的干扰。
-            DisableFlagParsing: true,
-            Run: func(cmd *cobra.Command, args []string) {...}, // `这里面放置一个匿名函数，后面详细说，看着代码就是比较多`
-        }
-    
-        // 保持cleanFlagSet分开，因此Cobra不会用全局标志污染它
-        kubeletFlags.AddFlags(cleanFlagSet)
-        
-        // AddKubeletConfigFlags将特定kubeletconfig.KubeletConfiguration的标志添加到指定的FlagSet
-        options.AddKubeletConfigFlags(cleanFlagSet, kubeletConfig)
-        
-        // AddGlobalFlags显式地注册库（glog，verflag等）从“flag”和“github.com/spf13/pflag”注册全局标志集的标志。
-        // 我们这样做是为了防止不需要的标志泄漏到Kubelet的标志集中。
-        options.AddGlobalFlags(cleanFlagSet)
-        cleanFlagSet.BoolP("help", "h", false, fmt.Sprintf("help for %s", cmd.Name()))
-    
-        // gly, but necessary，因为Cobra的默认UsageFunc和HelpFunc用全局标志影响flagset
-        const usageFmt = "Usage:\n  %s\n\nFlags:\n%s"
-        cmd.SetUsageFunc(func(cmd *cobra.Command) error {
-            fmt.Fprintf(cmd.OutOrStderr(), usageFmt, cmd.UseLine(), cleanFlagSet.FlagUsagesWrapped(2))
-            return nil
-        })
-        
-        cmd.SetHelpFunc(func(cmd *cobra.Command, args []string) {
-            fmt.Fprintf(cmd.OutOrStdout(), "%s\n\n"+usageFmt, cmd.Long, cmd.UseLine(), cleanFlagSet.FlagUsagesWrapped(2))
-        })
-    
-        return cmd
+    // NewKubeletConfiguration将使用默认值创建新的KubeletConfiguration
+    kubeletConfig, err := options.NewKubeletConfiguration()
+    // programmer error
+    if err != nil {
+        glog.Fatal(err)
     }
+
+    // 分装 command 结构
+    cmd := &cobra.Command{
+        Use: componentKubelet,
+        Long: `... 一大堆文字说明，此处略...`,// 一大堆文字说明，此处略
+        
+        //  Kubelet具有特殊的标志解析要求来强制执行标志优先级规则，所以我们在下面的Run中手动完成所有解析。
+        // DisableFlagParsing = true提供传递给kubelet的完整标志集`args` arg to Run，没有眼镜蛇的干扰。
+        DisableFlagParsing: true,
+        Run: func(cmd *cobra.Command, args []string) {...}, // `这里面放置一个匿名函数，后面详细说，看着代码就是比较多`
+    }
+
+    // 保持cleanFlagSet分开，因此Cobra不会用全局标志污染它
+    kubeletFlags.AddFlags(cleanFlagSet)
+    
+    // AddKubeletConfigFlags将特定kubeletconfig.KubeletConfiguration的标志添加到指定的FlagSet
+    options.AddKubeletConfigFlags(cleanFlagSet, kubeletConfig)
+    
+    // AddGlobalFlags显式地注册库（glog，verflag等）从“flag”和“github.com/spf13/pflag”注册全局标志集的标志。
+    // 我们这样做是为了防止不需要的标志泄漏到Kubelet的标志集中。
+    options.AddGlobalFlags(cleanFlagSet)
+    cleanFlagSet.BoolP("help", "h", false, fmt.Sprintf("help for %s", cmd.Name()))
+
+    // gly, but necessary，因为Cobra的默认UsageFunc和HelpFunc用全局标志影响flagset
+    const usageFmt = "Usage:\n  %s\n\nFlags:\n%s"
+    cmd.SetUsageFunc(func(cmd *cobra.Command) error {
+        fmt.Fprintf(cmd.OutOrStderr(), usageFmt, cmd.UseLine(), cleanFlagSet.FlagUsagesWrapped(2))
+        return nil
+    })
+    
+    cmd.SetHelpFunc(func(cmd *cobra.Command, args []string) {
+        fmt.Fprintf(cmd.OutOrStdout(), "%s\n\n"+usageFmt, cmd.Long, cmd.UseLine(), cleanFlagSet.FlagUsagesWrapped(2))
+    })
+
+    return cmd
+}
 ```
 
 [KubeletFlags结构（需要多看看）](kubelet_flags_struct.md)
@@ -120,123 +120,122 @@ HTTP服务器：kubelet还可以侦听HTTP并响应简单的API（目前未提�
 
 ```go
 func(cmd *cobra.Command, args []string) {
-	
-        // 初始标志解析，因为我们禁用了cobra's标志解析
-		if err := cleanFlagSet.Parse(args); err != nil {
-			cmd.Usage()
+    // 初始标志解析，因为我们禁用了cobra's标志解析
+	if err := cleanFlagSet.Parse(args); err != nil {
+		cmd.Usage()
+		glog.Fatal(err)
+	}
+
+	// 检查命令行中是否存在非标志参数
+	cmds := cleanFlagSet.Args()
+	if len(cmds) > 0 {
+		cmd.Usage()
+		glog.Fatalf("unknown command: %s", cmds[0])
+	}
+
+	// short-circuit on help 帮助命令等返回
+	help, err := cleanFlagSet.GetBool("help")
+	if err != nil {
+		glog.Fatal(`"help" flag is non-bool, programmer error, please correct`)
+	}
+	if help {
+		cmd.Help()
+		return
+	}
+
+	// short-circuit on VERFLAG 
+	verflag.PrintAndExitIfRequested() // PrintAndExitIfRequested将检查是否已传递-version标志，如果是，则打印版本并退出。
+	utilflag.PrintFlags(cleanFlagSet) // PrintFlags记录flagset中的标志
+
+	// 从基于标志的初始配置设置功能门
+	if err := utilfeature.DefaultFeatureGate.SetFromMap(kubeletConfig.FeatureGates); err != nil {
+		glog.Fatal(err)
+	}
+
+	// 验证最初的KubeletFlags
+	if err := options.ValidateKubeletFlags(kubeletFlags); err != nil {
+		glog.Fatal(err)
+	}
+
+	if kubeletFlags.ContainerRuntime == "remote" && cleanFlagSet.Changed("pod-infra-container-image") {
+		glog.Warning("Warning: For remote container runtime, --pod-infra-container-image is ignored in kubelet, which should be set in that remote runtime instead")
+	}
+
+	// 加载kubelet配置文件（如果提供）
+	if configFile := kubeletFlags.KubeletConfigFile; len(configFile) > 0 {
+		kubeletConfig, err = loadConfigFile(configFile)
+		if err != nil {
 			glog.Fatal(err)
 		}
-
-		// 检查命令行中是否存在非标志参数
-		cmds := cleanFlagSet.Args()
-		if len(cmds) > 0 {
-			cmd.Usage()
-			glog.Fatalf("unknown command: %s", cmds[0])
+		// 我们必须通过将命令行重新解析为新对象来强制执行标志优先级。这对于保持二进制升级的向后兼容性是必要的。有关更多详细信息，请参阅问题＃56171。
+		if err := kubeletConfigFlagPrecedence(kubeletConfig, args); err != nil {
+			glog.Fatal(err)
 		}
-
-		// short-circuit on help 帮助命令等返回
-		help, err := cleanFlagSet.GetBool("help")
-		if err != nil {
-			glog.Fatal(`"help" flag is non-bool, programmer error, please correct`)
-		}
-		if help {
-			cmd.Help()
-			return
-		}
-
-		// short-circuit on VERFLAG 
-		verflag.PrintAndExitIfRequested() // PrintAndExitIfRequested将检查是否已传递-version标志，如果是，则打印版本并退出。
-		utilflag.PrintFlags(cleanFlagSet) // PrintFlags记录flagset中的标志
-
-		// 从基于标志的初始配置设置功能门
+		// 根据新配置更新功能门
 		if err := utilfeature.DefaultFeatureGate.SetFromMap(kubeletConfig.FeatureGates); err != nil {
 			glog.Fatal(err)
 		}
+	}
 
-		// 验证最初的KubeletFlags
-		if err := options.ValidateKubeletFlags(kubeletFlags); err != nil {
+	// 我们总是验证本地配置（命令行+配置文件）。这是动态配置的默认“last-known-good”配置，并且必须始终保持有效。
+	if err := kubeletconfigvalidation.ValidateKubeletConfiguration(kubeletConfig); err != nil {
+		glog.Fatal(err)
+	}
+
+	// 如果启用，请使用动态kubelet配置
+	var kubeletConfigController *dynamickubeletconfig.Controller
+	if dynamicConfigDir := kubeletFlags.DynamicConfigDir.Value(); len(dynamicConfigDir) > 0 {
+		var dynamicKubeletConfig *kubeletconfiginternal.KubeletConfiguration
+		dynamicKubeletConfig, kubeletConfigController, err = BootstrapKubeletConfigController(dynamicConfigDir,
+			func(kc *kubeletconfiginternal.KubeletConfiguration) error {
+				// 在这里，我们在控制器的验证序列之前强制执行控制器内的标志优先级，以便我们在决定拒绝动态配置的同一点获得完整的验证。这修复了问题＃63305的标志优先级组件。有关标志优先级的一般详细信息，请参阅问题＃56171。.
+				return kubeletConfigFlagPrecedence(kc, args)
+			})
+		if err != nil {
 			glog.Fatal(err)
 		}
-
-		if kubeletFlags.ContainerRuntime == "remote" && cleanFlagSet.Changed("pod-infra-container-image") {
-			glog.Warning("Warning: For remote container runtime, --pod-infra-container-image is ignored in kubelet, which should be set in that remote runtime instead")
-		}
-
-		// 加载kubelet配置文件（如果提供）
-		if configFile := kubeletFlags.KubeletConfigFile; len(configFile) > 0 {
-			kubeletConfig, err = loadConfigFile(configFile)
-			if err != nil {
-				glog.Fatal(err)
-			}
-			// 我们必须通过将命令行重新解析为新对象来强制执行标志优先级。这对于保持二进制升级的向后兼容性是必要的。有关更多详细信息，请参阅问题＃56171。
-			if err := kubeletConfigFlagPrecedence(kubeletConfig, args); err != nil {
-				glog.Fatal(err)
-			}
-			// 根据新配置更新功能门
+		// 如果我们应该使用现有的本地配置，控制器将返回一个nil配置
+		if dynamicKubeletConfig != nil {
+			kubeletConfig = dynamicKubeletConfig
+			// Note: 在验证之前，我们的上述转换函数已经在控制器中强制执行了标记优先级。现在我们只需从新配置更新功能门。.
 			if err := utilfeature.DefaultFeatureGate.SetFromMap(kubeletConfig.FeatureGates); err != nil {
 				glog.Fatal(err)
 			}
 		}
+	}
 
-		// 我们总是验证本地配置（命令行+配置文件）。这是动态配置的默认“last-known-good”配置，并且必须始终保持有效。
-		if err := kubeletconfigvalidation.ValidateKubeletConfiguration(kubeletConfig); err != nil {
+	// 依据beletFlags和bearConfig构建一个KubeletServer
+	kubeletServer := &options.KubeletServer{
+		KubeletFlags:         *kubeletFlags, 
+		KubeletConfiguration: *kubeletConfig,
+	}
+
+	// 使用它来serveServer来构造默认的KubeletDeps
+	kubeletDeps, err := UnsecuredDependencies(kubeletServer)
+	if err != nil {
+		glog.Fatal(err)
+	}
+
+	// 将loader配置控制器添加到loadDeps
+	kubeletDeps.KubeletConfigController = kubeletConfigController
+
+	// 如果启用，启动实验性docker shim
+	if kubeletServer.KubeletFlags.ExperimentalDockershim {
+		if err := RunDockershim(&kubeletServer.KubeletFlags, kubeletConfig, stopCh); err != nil {
 			glog.Fatal(err)
 		}
+		return
+	}
 
-		// 如果启用，请使用动态kubelet配置
-		var kubeletConfigController *dynamickubeletconfig.Controller
-		if dynamicConfigDir := kubeletFlags.DynamicConfigDir.Value(); len(dynamicConfigDir) > 0 {
-			var dynamicKubeletConfig *kubeletconfiginternal.KubeletConfiguration
-			dynamicKubeletConfig, kubeletConfigController, err = BootstrapKubeletConfigController(dynamicConfigDir,
-				func(kc *kubeletconfiginternal.KubeletConfiguration) error {
-					// 在这里，我们在控制器的验证序列之前强制执行控制器内的标志优先级，以便我们在决定拒绝动态配置的同一点获得完整的验证。这修复了问题＃63305的标志优先级组件。有关标志优先级的一般详细信息，请参阅问题＃56171。.
-					return kubeletConfigFlagPrecedence(kc, args)
-				})
-			if err != nil {
-				glog.Fatal(err)
-			}
-			// 如果我们应该使用现有的本地配置，控制器将返回一个nil配置
-			if dynamicKubeletConfig != nil {
-				kubeletConfig = dynamicKubeletConfig
-				// Note: 在验证之前，我们的上述转换函数已经在控制器中强制执行了标记优先级。现在我们只需从新配置更新功能门。.
-				if err := utilfeature.DefaultFeatureGate.SetFromMap(kubeletConfig.FeatureGates); err != nil {
-					glog.Fatal(err)
-				}
-			}
-		}
-
-		// 依据beletFlags和bearConfig构建一个KubeletServer
-		kubeletServer := &options.KubeletServer{
-			KubeletFlags:         *kubeletFlags, 
-			KubeletConfiguration: *kubeletConfig,
-		}
-
-		// 使用它来serveServer来构造默认的KubeletDeps
-		kubeletDeps, err := UnsecuredDependencies(kubeletServer)
-		if err != nil {
-			glog.Fatal(err)
-		}
-
-		// 将loader配置控制器添加到loadDeps
-		kubeletDeps.KubeletConfigController = kubeletConfigController
-
-		// 如果启用，启动实验性docker shim
-		if kubeletServer.KubeletFlags.ExperimentalDockershim {
-			if err := RunDockershim(&kubeletServer.KubeletFlags, kubeletConfig, stopCh); err != nil {
-				glog.Fatal(err)
-			}
-			return
-		}
-
-		// 运行kubelet
-		glog.V(5).Infof("KubeletConfiguration: %#v", kubeletServer.KubeletConfiguration)
-		if err := Run(kubeletServer, kubeletDeps, stopCh); err != nil {
-			glog.Fatal(err)
-         }
+	// 运行kubelet
+	glog.V(5).Infof("KubeletConfiguration: %#v", kubeletServer.KubeletConfiguration)
+	if err := Run(kubeletServer, kubeletDeps, stopCh); err != nil {
+		glog.Fatal(err)
+     }
 }
 ```
 
-
+上述文件内容大致说完
 
 
 
