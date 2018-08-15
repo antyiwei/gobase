@@ -45,6 +45,8 @@ HTTP服务器：kubelet还可以侦听HTTP并响应简单的API（目前未提�
 
 参数为一个 chan struct{} 这种参数传入，非常方便。比较灵活。。。
 
+server.SetupSignalHandler()函数注册两个信号量：已注册SIGTERM和SIGINT。返回一个停止通道，该通道在其中一个信号上关闭。如果捕获到第二个信号，程序将以退出代码1终止。
+
 2. NewKubeletCommand函数分析
 
 ```go
@@ -120,7 +122,7 @@ func NewKubeletCommand(stopCh <-chan struct{}) *cobra.Command {
 
 ```go
 func(cmd *cobra.Command, args []string) {
-    // 初始标志解析，因为我们禁用了cobra's标志解析
+	// 初始标志解析，因为我们禁用了cobra's标志解析
 	if err := cleanFlagSet.Parse(args); err != nil {
 		cmd.Usage()
 		glog.Fatal(err)
@@ -163,7 +165,7 @@ func(cmd *cobra.Command, args []string) {
 
 	// 加载kubelet配置文件（如果提供）
 	if configFile := kubeletFlags.KubeletConfigFile; len(configFile) > 0 {
-		kubeletConfig, err = loadConfigFile(configFile)
+		kubeletConfig, err = loadConfigFile(configFile) // 加载配置文件，生成默认的kubelet配置信息
 		if err != nil {
 			glog.Fatal(err)
 		}
@@ -229,16 +231,43 @@ func(cmd *cobra.Command, args []string) {
 
 	// 运行kubelet
 	glog.V(5).Infof("KubeletConfiguration: %#v", kubeletServer.KubeletConfiguration)
-	if err := Run(kubeletServer, kubeletDeps, stopCh); err != nil {
+	/*
+	    这里很重要，因为这里是启动程序入口
+	*/
+	if err := Run(kubeletServer, kubeletDeps, stopCh); err != nil { 
 		glog.Fatal(err)
      }
 }
 ```
 
 上述文件内容大致说完
+loadConfigFile 加载文件，生成配置信息（基本的）
+UnsecuredDependencies 使用它来serveServer来构造默认的KubeletDeps
 
+4. 
+```go
+	/*
+	    这里很重要，因为这里是启动程序入口
+	*/
+	if err := Run(kubeletServer, kubeletDeps, stopCh); err != nil { 
+		glog.Fatal(err)
+     }
+```
+这个点，需要说一下，大多数参数配置等，这个入口是启动这些配置
+func run(s *options.KubeletServer, kubeDeps *kubelet.Dependencies, stopCh <-chan struct{}) (err error) {...}
+使用server（服务）,kubDeps（管理配置）,stopCh（信号量）来管理监听。
 
+ValidateKubeletServer //验证初始KubeletServer（我们首先设置功能门，因为此验证取决于功能门）
+initConfigz // 注册配置等
+NewKubeletClientCertificateManager // 创建证书
+UpdateTransport //我们将exitAfter设置为五分钟，因为我们使用此客户端配置来请求新证书 - 如果我们无法
+                //要申请新证书，我们将无法继续正常运作。退出该过程允许包装器
+                //或bootstrapping凭证可能会放置新的初始配置
+clientset.NewForConfig(clientConfig) 初始化一个配置
 
+以上总结：
+1。看似简单，进入后觉得里面很多东西都不知道，只能跟着代码藤一步步往下走
+2. 当你耐下寂寞，帮整体的看完时，你发现，原理之前看到，可以不看，重点的入口明白后，大意明白后，心里有一个脉络图，你就明白了
 
 #### 参考文件
 

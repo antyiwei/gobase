@@ -48,3 +48,34 @@ File：Path在命令行上作为标志传递。将监视此路径下的文件定
 HTTP端点：在命令行上作为参数传递的HTTP端点。这个端点每20秒检查一次（也可以用标志配置）。
 
 HTTP服务器：kubelet还可以侦听HTTP并响应简单的API（目前未提及）提交新清单。
+
+
+
+首先，注册所有的version版本，用于版本管理。
+
+然后注册了所有的group版本，用于group管理
+
+最后，针对group和version注册了RESTMapper。
+
+
+
+RESTMapper用于管理所有对象的信息。外部要获取的话，直接通过version，group获取到RESTMapper，然后通过kind类型可以获取到相对应的信息
+
+
+
+InfraContainer：infrastructure container。Kubelet会为每个Pod先创建一个InfraContainer，同一个Pod中的其他Container共享此容器的Pid、Network、IPC等Namespace及Volumes
+Mirror Pod：Kubelet支持从Api server、文件、URL三种方式获取Pod信息。其中通过后两种方式获取到的Pod称之为Static Pod，Kubelet会为其在Api Server中创建一个Mirror Pod
+
+除了来自apiserver的PodSpec之外，还有三种方法可以将容器清单提供给Kubelet：
+File：Path在命令行上作为标志传递。此文件每20秒重新检查一次（可使用标志进行配置）。
+HTTP端点：在命令行上作为参数传递的HTTP端点。每20秒检查一次此端点（也可使用标志进行配置）。
+HTTP服务器：kubelet还可以侦听HTTP并响应一个简单的API（当前未检测到）以提交新的清单。
+
+Probe：探针，可以在Pod定义文件中设置的用于检查容器是否健康的命令。可以使用ExecAction、TcpSocketAction、HTTPGetAction
+cAdvisor：kubenetes集成的一个docker资源使用率和性能特性的工具。kubelet在启动时会启动cAdvisor。
+
+
+
+源码为k8s v1.1.1稳定版本
+
+kubelet代码比较复杂，主要是因为其担负的任务比较多。下面我们将慢慢的分析
