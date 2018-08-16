@@ -59,7 +59,7 @@ Kubernetes源码分析从cmd包进行分析:cmd作为Kubernetes主入口，源�
 
 * ../src/k8s.io/kubernetes/cmd/kubelet/kubelet.go
 
-   中 Kubernetes cmd kubelet [kubelet.md](cmd/kubelet.md)
+   中 Kubernetes cmd kubelet [kubelet.md](cmd/kubelet/kubelet.md)
 * 
 
 *

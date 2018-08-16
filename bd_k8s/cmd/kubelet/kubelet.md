@@ -20,7 +20,7 @@ HTTP服务器：kubelet还可以侦听HTTP并响应简单的API（目前未提�
 
 ## kubelet源码分析流程
 
-![目录结构图](../img/k8s/kubelet/1.png)
+![目录结构图](../../img/k8s/kubelet/1.png)
 
 1. main入口：k8s.io\kubernetes\cmd\kubelet\kubelet.go
 
