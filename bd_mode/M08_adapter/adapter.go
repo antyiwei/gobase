@@ -1,4 +1,4 @@
-package M08_design
+package M08_adapter
 
 //Target 是适配的目标接口
 type Target interface {

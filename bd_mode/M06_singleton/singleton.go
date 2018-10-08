@@ -1,4 +1,4 @@
-package singleton
+package M06_singleton
 
 import "sync"
 
@@ -23,4 +23,22 @@ func NewSafe() *single {
 		instantiated = &single{}
 	})
 	return instantiated
+}
+
+
+// =====================================
+
+//
+type Singleton struct {
+
+}
+
+var singleton *Singleton
+var once2 sync.Once
+
+func GetInstance() *Singleton{
+	once2.Do(func(){
+		singleton = &Singleton{}
+	})
+	return singleton
 }

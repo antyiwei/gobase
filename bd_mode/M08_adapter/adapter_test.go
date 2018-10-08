@@ -1,4 +1,4 @@
-package M08_design
+package M08_adapter
 
 import "testing"
 
