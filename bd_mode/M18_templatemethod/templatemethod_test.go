@@ -1,0 +1,1 @@
+package M18_templatemethod
